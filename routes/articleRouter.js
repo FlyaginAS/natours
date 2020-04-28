@@ -1,15 +1,15 @@
 const express = require('express');
 const articleController = require('../controllers/articleController');
 
+const router = express.Router();
+router.param('title', articleController.checkId);
 
-
-const articleRouter = express.Router();
-articleRouter.route('/')
+router.route('/')
     .get(articleController.getAllArticles)
     .post(articleController.createArticle);
-articleRouter.route('/:title')
+router.route('/:title')
     .get(articleController.getArticle)
     .patch(articleController.updateArticle)
     .delete(articleController.deleteArticle);
 
-module.exports = articleRouter;
+module.exports = router;

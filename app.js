@@ -1,9 +1,5 @@
 const express = require('express');
-const fs = require('fs');
-const util = require('util');
 const morgan  = require('morgan');
-const articleController = require('./controllers/articleController');
-const userController = require('./controllers/userController');
 const userRouter = require('./routes/userRouter');
 const articleRouter = require('./routes/articleRouter');
 
@@ -16,5 +12,6 @@ app.use((req, res, next)=>{
 app.use(morgan('dev'));
 app.use('/api/v1/articles', articleRouter);
 app.use('/api/v1/users', userRouter);
+app.use(express.static(`${__dirname}/public`));
 
 module.exports= app;

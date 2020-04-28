@@ -4,6 +4,20 @@ const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+exports.checkId = async (req,res, next, value)=>{
+    const title = value;
+    const articles = JSON.parse(await  readFile(`${__dirname}/../data/articles.json`, 'utf-8'));
+    let article= articles.find((item)=>{
+        return item.title === title;
+    });
+    if(!article){
+        return res.status(404).json({
+            status: 'not found',
+            message: 'check id',
+        });
+    }
+    next();
+};
 exports.getAllArticles = async (req, res)=>{
     const articles = JSON.parse(await  readFile(`${__dirname}/../data/articles.json`, 'utf-8'));
     res.status(200).json({
@@ -15,12 +29,12 @@ exports.getAllArticles = async (req, res)=>{
     })};
 exports.getArticle = async (req, res) =>{
     const title = req.params.title;
-    const body= req.body;
     const articles = JSON.parse(await  readFile(`${__dirname}/../data/articles.json`, 'utf-8'));
-    let article= articles.find((item, index, arr)=>{
+    let article= articles.find((item)=>{
         return item.title === title;
     });
-    res.status(201).json({
+    console.log(article);
+    res.status(200).json({
         status: 'success',
         data:{
             article
