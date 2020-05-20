@@ -2,6 +2,14 @@ const  express = require('express');
 
 const app = express();
 app.use(express.json());
+app.use((req, res, next)=>{
+    console.log('Hello from the my middleware');
+    next();
+});
+app.use((req, res, next)=>{
+    req.time = new Date().toISOString();
+    next();
+});
 
 const tours = [
     {
@@ -24,7 +32,8 @@ const getAllTours = (req, res)=>{
         data: {
             tours,
         }
-    })
+    });
+    console.log(req.time);
 };
 const getTour = (req, res)=>{
     const id = req.params.id;
@@ -63,10 +72,6 @@ const deleteTour = (req, res)=>{
     })
 };
 
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', createTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
 app
     .route('/api/v1/tours')
     .get(getAllTours)
@@ -75,7 +80,6 @@ app
     .route('/api/v1/tours/:id')
     .get(getTour)
     .delete(deleteTour);
-
 
 const port = 8000;
 app.listen(port, ()=>{
