@@ -12,7 +12,7 @@ app.use((req, res, next)=>{
     next();
 });
 app.use(morgan('dev'));
-
+//callbacks
 const tours = [
     {
         name: 'Egypt',
@@ -107,23 +107,20 @@ const createUser = (req, res)=>{
         message: 'This route is not yet defined'
     });
 };
+//routes
+const tourRouter = express.Router();
+const userRouter = express.Router();
 
-app
-    .route('/api/v1/tours')
-    .get(getAllTours)
-    .post(createTour);
-app
-    .route('/api/v1/tours/:id')
-    .get(getTour)
-    .delete(deleteTour)
-    .patch(updateTour);
-app.route('/api/v1/users')
+
+userRouter.route('/')
     .get(getAllUsers)
     .post(createUser);
-app.route('/api/v1/users/:id')
+userRouter.route('/:id')
     .get(getUser)
     .patch(updateUser)
     .delete(deleteUser);
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 const port = 8000;
 app.listen(port, ()=>{
