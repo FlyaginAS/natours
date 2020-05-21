@@ -14,7 +14,9 @@ app.use((req, res, next)=>{
     req.time = new Date().toISOString();
     next();
 });
-app.use(morgan('dev'));
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'));
+}
 app.use(express.static(`${__dirname}/public`));
 //routes
 app.use('/api/v1/tours', tourRouter);
