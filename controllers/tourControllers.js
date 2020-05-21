@@ -3,7 +3,7 @@ const tours = require('../tours');
 exports.checkID = (req, res, next, val)=>{
     const id = val;
     if(id > tours.length-1 || id < 0){
-        res.status(404).json({
+        return res.status(404).json({
             status: 'not found',
             data: null,
         })
