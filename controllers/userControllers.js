@@ -1,4 +1,3 @@
-const tours = require('../tours');
 
 exports.getAllUsers = (req, res)=>{
     res.status(500).json({

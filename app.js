@@ -6,14 +6,6 @@ const userRouter = require('./routes/userRouters');
 const app = express();
 //middlewares
 app.use(express.json());
-app.use((req, res, next)=>{
-    console.log('Hello from the my middleware');
-    next();
-});
-app.use((req, res, next)=>{
-    req.time = new Date().toISOString();
-    next();
-});
 if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
 }
