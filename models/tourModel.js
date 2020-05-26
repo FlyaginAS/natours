@@ -51,8 +51,13 @@ const  tourSchema = new mongoose.Schema({
   startDates: [Date],
   slug: {
     type: String
-  }
+  },
+  secretTour: {
+    type: Boolean,
+  default: false,
+  },
 },
+//option object
   {
     toJSON: {virtuals: true},
     toObject: {virtuals: true},
@@ -72,5 +77,17 @@ tourSchema.pre('save', function(next) {
 //   console.log(doc);
 //   next();
 // });
+
+//queryMiddleware
+tourSchema.pre(/^find/g, function(next) {
+  this.find({secretTour: {$ne: true}});
+  this.start = Date.now();
+  next();
+});
+tourSchema.post(/^find/g, function(docs,next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  next();
+});
+
 
 module.exports = mongoose.model('Tour', tourSchema);
