@@ -34,7 +34,7 @@ class APIFeatures {
   }
 
   paginate(){
-    const { page = 1, limit=3} = this.queryString;
+    const { page = 1, limit=10} = this.queryString;
     const skip = (+page - 1)*limit;
     this.query = this.query.skip((+page-1)*limit).limit(+limit);
 
