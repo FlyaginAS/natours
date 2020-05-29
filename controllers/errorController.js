@@ -50,16 +50,13 @@ const sendErrorProd = (err, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  console.log( `1 process.env.NODE_ENV = ${process.env.NODE_ENV}`);
 
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    console.log( `2 process.env.NODE_ENV = ${process.env.NODE_ENV}`);
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    console.log( `3 process.env.NODE_ENV = ${process.env.NODE_ENV}`);
     let error = { ...err };
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
@@ -69,5 +66,4 @@ module.exports = (err, req, res, next) => {
 
     sendErrorProd(error, res);
   }
-  console.log( `4 process.env.NODE_ENV = ${process.env.NODE_ENV}`);
 };
