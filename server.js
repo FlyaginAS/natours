@@ -25,3 +25,5 @@ app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
 //TEST
+
+//set NODE_ENV=production & nodemon server.js
