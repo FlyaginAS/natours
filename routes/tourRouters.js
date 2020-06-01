@@ -24,7 +24,10 @@ router
 router
   .route('/:id')
   .get(tourControllers.getTour)
-  .delete(tourControllers.deleteTour)
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourControllers.deleteTour)
   .patch(tourControllers.updateTour);
 
 module.exports = router;
