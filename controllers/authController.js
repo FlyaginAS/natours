@@ -12,18 +12,20 @@ const signToken = async (id) => {
   });
 };
 
-exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create(req.body);
-
-  const token = await signToken(newUser._id);
-
-  res.status(201).json({
+const  createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
     status: 'success',
     token,
     data: {
-      user: newUser,
+      user,
     },
   });
+};
+
+exports.signup = catchAsync(async (req, res, next) => {
+  const newUser = await User.create(req.body);
+  createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -40,11 +42,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 
   //3) if everything is ok- send token to client
-  const token = await signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async(req, res, next) => {
@@ -158,12 +156,25 @@ exports.resetPassword = catchAsync( async (req, res, next) => {
   //3) update changedPasswordAt property for the user
 
   //4)log the user in, send jwt
-  const token = await signToken(user._id);
+  createSendToken(user, 200, res);
+});
 
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+exports.updatePassword = catchAsync( async (req, res, next) => {
+  //1)get user from collection by id - we have req.user after protect middleware
+  const user = await User.findById(req.user.id).select('+password');
+
+
+  //2)Check if posted current password is correct
+  if(!( await user.correctPassword(req.body.passwordCurrent, user.password))){
+    return next(new AppError('The password is not correct, try again!', 401));
+  }
+  //3)if so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  //User.findByIdAndUpdate will not work as indeed!!!!
+  await user.save();
+  //4)log user in , send JWT
+  createSendToken(user, 200, res);
 });
 
 
