@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -66,7 +67,7 @@ const tourSchema = new mongoose.Schema({
     },
     startLocation: {
       //GeoJSON embeded object, not schemaType object!!!
-      type:{
+      type: {
         type: String,
         default: 'Point',
         enum: ['Point'],
@@ -77,19 +78,22 @@ const tourSchema = new mongoose.Schema({
     },
     locations: [
       {
-        type:{
+        type: {
           type: String,
           default: 'Point',
           enum: ['Point'],
         },
-        coordinates:[Number],
+        coordinates: [Number],
         address: String,
         description: String,
         day: Number,
       },
     ],
+  guides: [
+
+  ],
   },
-//option object
+  //option object
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -104,6 +108,13 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+tourSchema.pre('save', async function(next) {
+  const guidesPromises = this.guides.map(async id => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
+  next();
+});
+
 //post middleware
 // tourSchema.post('save', function(doc, next) {
 //   console.log(doc);
@@ -117,14 +128,14 @@ tourSchema.pre(/^find/g, function (next) {
   next();
 });
 
-tourSchema.post(/^find/g, function (docs,next) {
+tourSchema.post(/^find/g, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds`);
   next();
 });
 //aggregation middleware
 tourSchema.pre('aggregate', function (next) {
   this._pipeline.unshift({
-    $match: { secretTour: { $ne: true }}
+    $match: { secretTour: { $ne: true } },
   });
   next();
 });
