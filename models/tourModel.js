@@ -89,9 +89,7 @@ const tourSchema = new mongoose.Schema({
         day: Number,
       },
     ],
-  guides: [
-
-  ],
+  guides: Array,
   },
   //option object
   {
