@@ -14,7 +14,7 @@ const reviewSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     tour: {
       type: mongoose.Schema.ObjectId,
@@ -34,4 +34,4 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-module.exports = reviewSchema;
+module.exports = mongoose.model('Review', reviewSchema);
