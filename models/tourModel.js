@@ -105,6 +105,12 @@ const tourSchema = new mongoose.Schema({
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+//virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review', // модель
+  foreignField: 'tour', // поле в Review
+  localField: '_id', //айди в нашей схеме
+});
 //document middleware: runs before .save() and .create()  not insertMany!!!
 //this is the current document
 tourSchema.pre('save', function (next) {
