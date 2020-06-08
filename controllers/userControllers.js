@@ -9,28 +9,14 @@ const filterObj = (obj, ...allowedFields) => {
     if(allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
-}
-
-exports.getAllUsers = async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
 };
-exports.getUser = (req, res)=>{
+
+exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined'
+    message: 'Please use /signup insted',
   });
 };
-
-
-exports.createUser = handlerFactory.createOne(User);
 exports.updateMe = catchAsync( async (req, res, next) => {
   //1) create error if user Posts password data
   if(req.body.password || req.body.passwordConfirm) {
@@ -53,7 +39,6 @@ exports.updateMe = catchAsync( async (req, res, next) => {
   },
   });
 });
-
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, {active: false});
 
@@ -66,3 +51,5 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 //do not update passwords with this
 exports.updateUser = handlerFactory.updateOne(User);
 exports.deleteUser = handlerFactory.deleteOne(User);
+exports.getAllUsers = handlerFactory.getAll(User);
+exports.getUser = handlerFactory.getOne(User);
