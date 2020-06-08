@@ -108,8 +108,8 @@ tourSchema.virtual('durationWeeks').get(function () {
 //virtual populate
 tourSchema.virtual('reviews', {
   ref: 'Review', // модель
-  foreignField: 'tour', // поле в Review
-  localField: '_id', //айди в нашей схеме
+  foreignField: 'tour', // поле в Review /ссылка на тур из ревью
+  localField: '_id', //айди в нашей схеме тура
 });
 //document middleware: runs before .save() and .create()  not insertMany!!!
 //this is the current document
