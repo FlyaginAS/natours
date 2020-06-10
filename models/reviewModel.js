@@ -65,11 +65,18 @@ reviewSchema.statics.calcAverageRatings = async function(tourId) {
       },
     },
   ]);
-  console.log(stats);
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  // console.log(stats);
+  if(stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 0,
+    });
+  }
 };
 
 reviewSchema.post('save', function() {
@@ -77,6 +84,20 @@ reviewSchema.post('save', function() {
   //this.constructor = it is a Review = model
   this.constructor.calcAverageRatings(this.tour);
 });
+//для апдейта и удаления мы используем findByIdAndUpdate and findByIdAndDelete
+// но для них нет document middleware- we will use query middleware with hacks
+reviewSchema.pre(/^findOneAnd/, async function(next) {
+  this.r = await this.findOne();
+  console.log(this.r);
+  next();
+});
+//при pre миддлваре у нас еще не внесены изменения в отзыв в базе.
+//а нам нужен доступ к айди тура в ревью и к модели ревью- на модели мы можем вызвать статич метод
+reviewSchema.post(/^findOneAnd/, async function() {
+  //await this.findOne(); does not work here, query has already executed
+  await this.r.constructor.calcAverageRatings(this.r.tour);
+});
+
 
 module.exports = mongoose.model('Review', reviewSchema);
 
