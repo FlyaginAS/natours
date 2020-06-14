@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // 1) MIDDLEWARES
 //serving static files
-app.use(express.static(path.join(__dirname, `${__dirname}/public`)));
+app.use(express.static(path.join(__dirname, 'public')));
 //secutity http headers
 app.use(helmet());
 //development logging
@@ -54,8 +54,11 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
-app.get('/', (req, res)=> {
-  res.status(200).render('base');
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Fores Hiker',
+    user: 'Jonas',
+  });
 });
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
