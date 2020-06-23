@@ -39,3 +39,10 @@ exports.getLoginForm = catchAsync( async (req, res) => {
     title: 'Log into your account',
   });
 });
+
+exports.getAccount = (req, res) => {
+  //user мы передали в миддлваре protect
+  res.status(200).render('account', {
+    title: 'Your accont',
+  });
+};
