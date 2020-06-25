@@ -23,6 +23,8 @@ exports.createUser = (req, res) => {
   });
 };
 exports.updateMe = catchAsync( async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
   //1) create error if user Posts password data
   if(req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Use /updateMyPassword', 400));
