@@ -1,7 +1,32 @@
+const multer = require('multer');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const handlerFactory = require('./handlerFactory');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users'); // cb how a next();  null or error
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1]; //расширение из миметайпа
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if(file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -23,8 +48,6 @@ exports.createUser = (req, res) => {
   });
 };
 exports.updateMe = catchAsync( async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.file);
   //1) create error if user Posts password data
   if(req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates. Use /updateMyPassword', 400));

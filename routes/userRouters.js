@@ -1,9 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userControllers');
 const authController = require('../controllers/authController');
-const multer = require('multer');
 
-const upload= multer({ dest: 'public/img/users' });
 
 const router = express.Router();
 
@@ -25,7 +23,7 @@ router.get(
   userController.getUser,
 );
 
-router.patch('/updateMe', upload.single('photo'), userController.updateMe);
+router.patch('/updateMe', userController.uploadUserPhoto, userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 router.use(authController.restrictTo('admin'));
